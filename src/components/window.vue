@@ -10,7 +10,7 @@
   export default {
     name:'window',
     methods:{
-      startDrag: function(ev){
+      startDrag: function(ev){        
         this.$store.dispatch('pickWindow',ev.currentTarget.dataset.id)
         let elem = ev.currentTarget
         let parent = elem.parentElement
@@ -21,9 +21,9 @@
         let parentLeft = getCoords(parent).left
         let parentTop = getCoords(parent).top
           
-        function moveDrag(ev){
-          let x = ev.pageX - parentLeft - shiftX
-          let y = ev.pageY - parentTop - shiftY
+        function moveDrag(ev){          
+          let x = (ev.pageX ? ev.pageX : ev.changedTouches[0].pageX) - parentLeft - shiftX
+          let y = (ev.pageY ? ev.pageY : ev.changedTouches[0].pageY) - parentTop - shiftY
           if(x >= 0 && x + elem.offsetWidth <= parent.offsetWidth){
             elem.style.left = x + 'px'          
           }else if(x < 0){
@@ -49,8 +49,8 @@
         }
         
         elem.ondragstart = function() {
-          return false;
-        };
+          return false
+        }
         
         elem.onmouseup = function(ev){
           elem.onmouseup = null
