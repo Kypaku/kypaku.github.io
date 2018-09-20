@@ -44,7 +44,7 @@
           moveDrag(ev)
         }
           
-        document.touchmove = function(ev){
+        document.ontouchmove = function(ev){
           moveDrag(ev)
         }
         
