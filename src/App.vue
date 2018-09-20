@@ -1,6 +1,5 @@
 <template>
   <div class="app">
-    Touch
     <div class="element_header">
       <div class="element_plus pointer left" @click="addWindow"><b>+</b></div>
       <panel/>
