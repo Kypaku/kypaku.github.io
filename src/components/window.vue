@@ -69,7 +69,7 @@
         document.onmousemove = null 
         
         elem.touchend = null
-        document.touchend = null 
+        document.ontouchmove = null 
 
         this.$store.commit('updateWindow', {id: elem.dataset.id,left: parseInt(elem.style.left), top: parseInt(elem.style.top)})
       }      
