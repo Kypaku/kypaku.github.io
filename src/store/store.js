@@ -24,6 +24,7 @@ export const store = new Vuex.Store({
     },
     showWindow({commit}, id){
       commit('showWindow', id)
+      commit('pickWindow', id)
     }
   }
   ,
@@ -42,12 +43,6 @@ export const store = new Vuex.Store({
     },
     deleteWindow(state, id){
       Vue.delete(state.windows, id)
-      for( let id in state.windows ){
-        state.windows[id].pos.left = state.windows[id].pos.left + 1
-        state.windows[id].pos.top = state.windows[id].pos.top + 1
-        state.windows[id].pos.left = state.windows[id].pos.left - 1
-        state.windows[id].pos.top = state.windows[id].pos.top - 1
-      }
     },
     updateWindow(state, obj){
       state.windows[obj.id].pos.left = obj.left
@@ -55,25 +50,18 @@ export const store = new Vuex.Store({
     },
     pickWindow(state, id){ 
       Object.values(state.windows).forEach(el => {          
-          if(el.z > state.windows[id].z){
-            let oldZ = state.windows[id].z         
-            state.windows[id].z = el.z
-            el.z = oldZ
-          }
+        if(el.z > state.windows[id].z){
+          let oldZ = state.windows[id].z         
+          state.windows[id].z = el.z
+          el.z = oldZ
+        }
       })      
     },
     hideWindow(state, id){
       state.windows[id].hidden = true
     },
     showWindow(state, id){
-      state.windows[id].hidden = false
-      Object.values(state.windows).forEach(el => {          
-          if(el.z > state.windows[id].z){
-            let oldZ = state.windows[id].z         
-            state.windows[id].z = el.z
-            el.z = oldZ
-          }
-      })            
+      state.windows[id].hidden = false            
     },
     setStartEl(state, val){
       state.startEl = val

@@ -1,5 +1,5 @@
 <template>
-    <div @mousedown="startDrag" @mouseup="endDrag" @touchstart="startDrag" @touchend="endDrag">
+    <div @mousedown="startDrag" @mouseup="endDrag" @touchstart="startDrag" @touchend="endDrag" >
       <slot></slot>
     </div>
 </template>
@@ -72,7 +72,7 @@
         document.ontouchmove = null 
 
         this.$store.commit('updateWindow', {id: elem.dataset.id,left: parseInt(elem.style.left), top: parseInt(elem.style.top)})
-      }      
+      }
     }
   }
 </script>

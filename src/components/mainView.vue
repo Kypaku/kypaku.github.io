@@ -50,8 +50,7 @@
       }
     },
     watch:{
-      windows: function(oldVal, val){
-        
+      windows: function(oldVal, val){        
         if(!isFilling()){
           setClosest()
         }
