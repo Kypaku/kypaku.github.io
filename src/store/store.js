@@ -63,6 +63,7 @@ export const store = new Vuex.Store({
       })      
     },
     hideWindow(state, id){
+      state.windows[id].active = false
       state.windows[id].hidden = true
     },
     showWindow(state, id){

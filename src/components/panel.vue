@@ -9,7 +9,7 @@
       <div class="element_inner left">
         <div class="element_window pointer"
           v-for="window in windows"
-          @click="showWindow(window.id)"
+          @click="window.active ? hideWindow(window.id) : showWindow(window.id)"
         >    
           <div class="element_title left">
             Window #{{window.id}}
