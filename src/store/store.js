@@ -31,13 +31,17 @@ export const store = new Vuex.Store({
   mutations: {
     addWindow(state, id, obj){ 
       let max_z = 0
-      Object.values(state.windows).forEach(el => el.z > max_z ? max_z = el.z : null)
+      Object.values(state.windows).forEach(el => {
+          el.z > max_z ? max_z = el.z : null
+          el.active = false
+      })
       state.last_id++
       let newWindow = obj || {
         id: state.last_id,
         z: max_z + 1,
         hidden: false,
-        pos: {left: 50, top: 50}
+        pos: {left: 50, top: 50},
+        active: true
       }
       Vue.set(state.windows, state.last_id, newWindow)   
     },
@@ -55,6 +59,7 @@ export const store = new Vuex.Store({
           state.windows[id].z = el.z
           el.z = oldZ
         }
+        el.id != id ? el.active = false : el.active = true
       })      
     },
     hideWindow(state, id){
@@ -74,5 +79,6 @@ store.commit('addWindow', 0, {
   id:0,
   z:1,
   hide: false,
-  pos: {left: 50, top: 50}
+  pos: {left: 50, top: 50},
+  active: true
 })

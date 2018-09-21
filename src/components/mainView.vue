@@ -7,6 +7,7 @@
             :data-id="window.id"            
             v-if="window && !window.hidden"
             :style="{zIndex:window.z, left: window.pos.left + 'px', top: window.pos.top + 'px'}"
+            :class="{active: window.active}"
     >    
       <div class="element_top left">
         <div class="element_title left">
@@ -72,6 +73,9 @@
     height: 330px;
     outline: 1px solid;  
     background: lightgray;
+  }
+  .element_window.active{
+    background: #f5f5f5;
   }
   .element_content{
     width: 100%;
