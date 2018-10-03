@@ -5,7 +5,7 @@
       <b><</b>
     </div>
   
-    <div class="element_wrapper left">
+    <div class="element_wrapper left" id="wrapper">
       <div class="element_inner left">
         <div class="element_window pointer"
           v-for="window in windows"
@@ -30,13 +30,13 @@
 
 <script>
   import { mapActions } from 'vuex'
-  import { getStartEl, isFilling, setClosest } from '../helpers/helpers.js'
+  import { getStartEl, getEndEl, rightSide, getCoords} from '../helpers/helpers.js'
   
   export default {
     name:'main-view',
     data(){
       return {
-        windows: this.$store.state.windows,
+        windows: this.$store.state.windows
       }
     },  
     methods:{
@@ -47,34 +47,21 @@
         'hideWindow'
       ]),
       shiftRight: function(){
-        let startEl = getStartEl()
         let children = document.getElementsByClassName('element_inner')[0].children
+        let endEl = children[getEndEl()]
         if( !children.length ) return false;
-        let firstEl = children[0]      
-        if(this.isFilling()){
-          !firstEl.style.marginLeft ? firstEl.style.marginLeft = "0px" : null
-          firstEl.style.marginLeft = (parseInt(firstEl.style.marginLeft) - parseInt(children[startEl].offsetWidth)) + 'px'
-          setTimeout(setClosest, 100)
-        }
+        let diff = rightSide(endEl) - rightSide(wrapper)        
+        wrapper.scrollTo(wrapper.scrollLeft + diff, 0)
       },
       shiftLeft: function(){
-        let startEl = getStartEl()
         let children = document.getElementsByClassName('element_inner')[0].children
+        let startEl = children[getStartEl()]
         if( !children.length ) return false;
-        let firstEl = children[0]
-        if(startEl){
-          !firstEl.style.marginLeft ? firstEl.style.marginLeft = "0px" : null
-          firstEl.style.marginLeft = (parseInt(firstEl.style.marginLeft) + parseInt(children[startEl].offsetWidth)) + 'px'
-          setTimeout(setClosest, 100)
-        }
-      },
-      isFilling: function(){
-        return isFilling()
-      } ,
-      getStartEl: function(){
-        return getStartEl()
-      }      
-    },
+        let diff = getCoords(wrapper).left - getCoords(startEl).left
+        !Math.trunc(diff) ? (diff = startEl.offsetWidth) : null
+        wrapper.scrollTo(wrapper.scrollLeft - diff, 0)
+      }   
+    }
 
   }      
 </script>  

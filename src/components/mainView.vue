@@ -28,7 +28,6 @@
 <script>
   import { mapActions } from 'vuex'
   import window from './window.vue'  
-  import { isFilling, setClosest } from '../helpers/helpers.js'
   
   export default {
     name:'main-view',
@@ -48,13 +47,6 @@
       deleteWindow: function(ev, id){
         ev.stopImmediatePropagation()
         this.$store.commit('deleteWindow', id)         
-      }
-    },
-    watch:{
-      windows: function(oldVal, val){        
-        if(!isFilling()){
-          setClosest()
-        }
       }
     }
   }      
