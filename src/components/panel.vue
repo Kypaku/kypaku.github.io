@@ -1,7 +1,7 @@
 <template>
   <div class="panel"> 
     
-    <div class="element_left pointer left" @click="shiftRight">
+    <div class="element_left pointer left" @click="shiftLeft">
       <b><</b>
     </div>
   
@@ -21,7 +21,7 @@
       </div>
     </div>
     
-    <div class="element_right pointer right" @click="shiftLeft">
+    <div class="element_right pointer right" @click="shiftRight">
       <b>></b>
     </div>    
 
@@ -46,25 +46,25 @@
         'pickWindow',
         'hideWindow'
       ]),
-      shiftLeft: function(){
-        let start_el = getStartEl()
+      shiftRight: function(){
+        let startEl = getStartEl()
         let children = document.getElementsByClassName('element_inner')[0].children
         if( !children.length ) return false;
-        let first_el = children[0]      
+        let firstEl = children[0]      
         if(this.isFilling()){
-          !first_el.style.marginLeft ? first_el.style.marginLeft = "0px" : null
-          first_el.style.marginLeft = (parseInt(first_el.style.marginLeft) - parseInt(children[start_el].offsetWidth)) + 'px'
+          !firstEl.style.marginLeft ? firstEl.style.marginLeft = "0px" : null
+          firstEl.style.marginLeft = (parseInt(firstEl.style.marginLeft) - parseInt(children[startEl].offsetWidth)) + 'px'
           setTimeout(setClosest, 100)
         }
       },
-      shiftRight: function(){
-        let start_el = getStartEl()
+      shiftLeft: function(){
+        let startEl = getStartEl()
         let children = document.getElementsByClassName('element_inner')[0].children
         if( !children.length ) return false;
-        let first_el = children[0]
-        if(start_el){
-          !first_el.style.marginLeft ? first_el.style.marginLeft = "0px" : null
-          first_el.style.marginLeft = (parseInt(first_el.style.marginLeft) + parseInt(children[start_el].offsetWidth)) + 'px'
+        let firstEl = children[0]
+        if(startEl){
+          !firstEl.style.marginLeft ? firstEl.style.marginLeft = "0px" : null
+          firstEl.style.marginLeft = (parseInt(firstEl.style.marginLeft) + parseInt(children[startEl].offsetWidth)) + 'px'
           setTimeout(setClosest, 100)
         }
       },

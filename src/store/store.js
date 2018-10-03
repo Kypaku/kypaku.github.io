@@ -6,7 +6,7 @@ Vue.use(Vuex);
 export const store = new Vuex.Store({
   state: {
     windows: {},
-    last_id: 0,
+    lastId: 0,
     startEl: 0
   },
   actions:{
@@ -30,36 +30,46 @@ export const store = new Vuex.Store({
   ,
   mutations: {
     addWindow(state, id, obj){ 
-      let max_z = 0
+      let maxZ = 0
       Object.values(state.windows).forEach(el => {
-          el.z > max_z ? max_z = el.z : null
+          el.z > maxZ ? maxZ = el.z : null
           el.active = false
       })
-      state.last_id++
+      state.lastId++
       let newWindow = obj || {
-        id: state.last_id,
-        z: max_z + 1,
+        id: state.lastId,
+        z: maxZ + 1,
         hidden: false,
         pos: {left: 50, top: 50},
         active: true
       }
-      Vue.set(state.windows, state.last_id, newWindow)   
+      Vue.set(state.windows, state.lastId, newWindow)   
     },
     deleteWindow(state, id){
+      let elZ = state.windows[id].z
       Vue.delete(state.windows, id)
+      Object.values(state.windows).forEach(el => { 
+        if(el.z >= elZ){
+          el.z--         
+        }
+      })      
     },
     updateWindow(state, obj){
       state.windows[obj.id].pos.left = obj.left
       state.windows[obj.id].pos.top = obj.top
     },
     pickWindow(state, id){ 
-      Object.values(state.windows).forEach(el => {          
-        if(el.z > state.windows[id].z){
-          let oldZ = state.windows[id].z         
-          state.windows[id].z = el.z
-          el.z = oldZ
+      let elZ = state.windows[id].z
+      Object.values(state.windows).forEach(el => { 
+        if(el.id != id){
+          if(el.z >= elZ){
+            el.z--         
+            state.windows[id].z++
+          }
+          el.active = false
+        }else{
+          el.active = true
         }
-        el.id != id ? el.active = false : el.active = true
       })      
     },
     hideWindow(state, id){
