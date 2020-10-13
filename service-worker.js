@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/4.3.1/workbox-sw.js");
 
 importScripts(
-  "/precache-manifest.02e277cdd7e5a10cd6fa312ed15df677.js"
+  "/precache-manifest.a0a95a9b462bced7c609250d42d69fb1.js"
 );
 
 workbox.core.setCacheNameDetails({prefix: "ky-timediagrams"});
