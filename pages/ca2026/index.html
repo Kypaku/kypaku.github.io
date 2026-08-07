@@ -4,11 +4,511 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/pages/ca2026/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>CA 2026 </title>
-    <script type="module" crossorigin src="/pages/ca2026/assets/index-BBG8LvpW.js"></script>
-    <link rel="stylesheet" crossorigin href="/pages/ca2026/assets/index-gUoxSYU_.css">
+
+    <title>Cellular Automaton Simulator — 1D CA Explorer, Rule Search &amp; Analysis</title>
+    <meta
+      name="description"
+      content="Interactive one-dimensional cellular automaton simulator: any number of states, totalistic, template (local) and descendant rules, space-time diagrams, batch rule search with automated analyses (classification, fields, gliders, chaos, lines) and tagging."
+    />
+    <meta
+      name="keywords"
+      content="cellular automaton, cellular automata, elementary cellular automaton, rule 30, rule 110, totalistic rule, space-time diagram, gliders, complexity, emergence, simulator, Wolfram classes"
+    />
+    <meta name="author" content="Kypaku" />
+    <meta name="robots" content="index, follow" />
+    <link rel="canonical" href="https://kypaku.github.io/pages/ca2026/" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Cellular Automaton Simulator" />
+    <meta property="og:title" content="Cellular Automaton Simulator — 1D CA Explorer" />
+    <meta
+      property="og:description"
+      content="Run one-dimensional cellular automata with any number of states, design rules, render space-time diagrams and batch-search rule space with automated analyses."
+    />
+    <meta property="og:url" content="https://kypaku.github.io/pages/ca2026/" />
+    <meta property="og:image" content="https://kypaku.github.io/pages/ca2026/screen1.jpg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Cellular Automaton Simulator — 1D CA Explorer" />
+    <meta
+      name="twitter:description"
+      content="Run one-dimensional cellular automata with any number of states, design rules, render space-time diagrams and batch-search rule space with automated analyses."
+    />
+    <meta name="twitter:image" content="https://kypaku.github.io/pages/ca2026/screen1.jpg" />
+
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "Cellular Automaton Simulator",
+        "url": "https://kypaku.github.io/pages/ca2026/",
+        "applicationCategory": "EducationalApplication",
+        "operatingSystem": "Any (web browser)",
+        "browserRequirements": "Requires JavaScript and HTML5 canvas",
+        "description": "Interactive explorer for one-dimensional cellular automata: arbitrary state counts, totalistic / template / descendant rules, configurable neighborhood and temporal depth, space-time diagram rendering, large PNG export, and batch analyses that scan rule space and tag rules.",
+        "author": { "@type": "Person", "name": "Kypaku" },
+        "isAccessibleForFree": true,
+        "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
+      }
+    </script>
+
+    <script>
+      // Apply the saved theme before the first paint, so the static shell below
+      // already looks like the mounted app. Mirrors src/composables/useTheme.ts.
+      ;(function () {
+        var theme = 'light'
+        try {
+          var stored = window.localStorage.getItem('ca-theme')
+          if (stored === 'light' || stored === 'dark') {
+            theme = stored
+          } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            theme = 'dark'
+          }
+        } catch (e) {
+          /* localStorage can be blocked - fall back to the light theme */
+        }
+        document.documentElement.classList.add(theme)
+      })()
+    </script>
+    <script type="module" crossorigin src="/pages/ca2026/assets/index-DWyKak7s.js"></script>
+    <link rel="stylesheet" crossorigin href="/pages/ca2026/assets/index-BDvVA4Th.css">
   </head>
   <body>
-    <div id="app"></div>
+    <!--
+      Static copy of the app's initial screen. It uses the same markup and the
+      same stylesheet as the Vue app, so the page looks identical before the
+      bundle is executed - just not interactive (the `inert` attribute below
+      disables the controls until Vue takes over).
+
+      createApp(App).mount('#app') clears this container, so it is replaced by
+      the real, interactive app automatically. It also gives crawlers that do
+      not execute JavaScript the full page content.
+    -->
+    <div id="app">
+      <main class="app-shell">
+        <div class="app-topbar">
+          <h1>Cellular Automaton Simulator</h1>
+          <div class="app-topbar-actions" inert>
+            <span class="icon-btn" aria-hidden="true">
+              <svg
+                class="static-icon-sun"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <circle cx="12" cy="12" r="4" />
+                <line x1="12" y1="1" x2="12" y2="3" />
+                <line x1="12" y1="21" x2="12" y2="23" />
+                <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+                <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+                <line x1="1" y1="12" x2="3" y2="12" />
+                <line x1="21" y1="12" x2="23" y2="12" />
+                <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
+                <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+              </svg>
+              <svg
+                class="static-icon-moon"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+              </svg>
+            </span>
+            <a
+              class="icon-btn"
+              href="https://github.com/Kypaku/ca2026"
+              rel="noopener noreferrer"
+              title="GitHub: Kypaku"
+              aria-label="GitHub: Kypaku"
+            >
+              <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+                <path
+                  d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38
+                  0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13
+                  -.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07
+                  -1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82
+                  .64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12
+                  .51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2
+                  0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"
+                />
+              </svg>
+            </a>
+          </div>
+        </div>
+
+        <div class="ca-wrap" inert>
+          <h2 class="sr-only">
+            One-dimensional cellular automaton simulator with a configurable number of states,
+            totalistic and local rules
+          </h2>
+
+          <div class="ca-layout">
+            <div class="ca-main">
+              <div class="ca-key">
+                <span><span class="ca-dot" style="background: #f4f7f8"></span>0</span>
+                <span><span class="ca-dot" style="background: #7ba9c0"></span>1</span>
+                <span class="ca-key-text">local left-center-right map -&gt; new state</span>
+              </div>
+
+              <div class="ca-legend-wrap">
+                <div class="ca-legend ca-legend--local">
+                  <div class="ca-cell">
+                    <div class="ca-sq ca-sq--clickable" style="background: #f4f7f8"></div>
+                    <div class="ca-cap">000-&gt;0</div>
+                  </div>
+                  <div class="ca-cell">
+                    <div class="ca-sq ca-sq--clickable" style="background: #7ba9c0"></div>
+                    <div class="ca-cap">001-&gt;1</div>
+                  </div>
+                  <div class="ca-cell">
+                    <div class="ca-sq ca-sq--clickable" style="background: #7ba9c0"></div>
+                    <div class="ca-cap">010-&gt;1</div>
+                  </div>
+                  <div class="ca-cell">
+                    <div class="ca-sq ca-sq--clickable" style="background: #7ba9c0"></div>
+                    <div class="ca-cap">011-&gt;1</div>
+                  </div>
+                  <div class="ca-cell">
+                    <div class="ca-sq ca-sq--clickable" style="background: #7ba9c0"></div>
+                    <div class="ca-cap">100-&gt;1</div>
+                  </div>
+                  <div class="ca-cell">
+                    <div class="ca-sq ca-sq--clickable" style="background: #7ba9c0"></div>
+                    <div class="ca-cap">101-&gt;1</div>
+                  </div>
+                  <div class="ca-cell">
+                    <div class="ca-sq ca-sq--clickable" style="background: #7ba9c0"></div>
+                    <div class="ca-cap">110-&gt;1</div>
+                  </div>
+                  <div class="ca-cell">
+                    <div class="ca-sq ca-sq--clickable" style="background: #f4f7f8"></div>
+                    <div class="ca-cap">111-&gt;0</div>
+                  </div>
+                </div>
+                <div class="ca-json-rule">
+                  <button type="button" class="ca-json-toggle">
+                    <span class="ca-panel-toggle-icon">▶</span>
+                    JSON rule
+                  </button>
+                </div>
+              </div>
+
+              <canvas
+                class="ca-canvas"
+                width="1203"
+                height="660"
+                role="img"
+                aria-label="Spatiotemporal diagram of the cellular automaton"
+              ></canvas>
+
+              <div class="ca-row">
+                <div class="ca-control">
+                  <label class="ca-label">Continue simulating</label>
+                  <div class="ca-inline">
+                    <input class="ca-number" type="number" value="50" />
+                    <button type="button">continue 50 generations</button>
+                  </div>
+                  <div class="ca-meter">
+                    adds generations past the last row, without restarting from the initial row
+                  </div>
+                </div>
+              </div>
+
+              <div class="ca-row">
+                <div class="ca-analysis">
+                  <h3 class="ca-panel-title">View: convert field to patterns</h3>
+                  <div class="ca-control ca-control--wide">
+                    <label class="ca-label">
+                      The field is cut into square M×M chunks. Each chunk becomes one pixel:
+                      identical patterns get the same unique color. Below is a legend showing which
+                      pattern corresponds to which color.
+                    </label>
+                    <div class="ca-inline">
+                      <label class="ca-field">
+                        <span class="ca-field-cap">chunk size M</span>
+                        <input class="ca-number" type="number" value="4" />
+                      </label>
+                      <div class="ca-seg">
+                        <button type="button" class="on">colored</button>
+                        <button type="button">grayscale</button>
+                      </div>
+                      <button type="button">▦ convert to patterns</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="ca-row">
+                <div class="ca-analysis">
+                  <h3 class="ca-panel-title">Render: export a large image</h3>
+                  <div class="ca-control ca-control--wide">
+                    <label class="ca-label">
+                      Renders the current rule off-screen at a chosen size and gives you a ready PNG
+                      to download. The PNG is encoded directly (no canvas), so it is not bound by the
+                      browser's canvas size limit — very large fields, e.g. 10000×10000, work as long
+                      as there is enough memory. Switch the scale to "cells per pixel" to shrink a big
+                      field into a small image. The interactive diagram above is left untouched.
+                    </label>
+                    <div class="ca-inline">
+                      <label class="ca-field">
+                        <span class="ca-field-cap">width (cells)</span>
+                        <input class="ca-number" type="number" value="2000" />
+                      </label>
+                      <label class="ca-field">
+                        <span class="ca-field-cap">height (generations)</span>
+                        <input class="ca-number" type="number" value="2000" />
+                      </label>
+                    </div>
+                    <div class="ca-inline">
+                      <div class="ca-seg">
+                        <button type="button" class="on">enlarge (px/cell)</button>
+                        <button type="button">shrink (cells/px)</button>
+                      </div>
+                      <label class="ca-field">
+                        <span class="ca-field-cap">pixels per cell</span>
+                        <input class="ca-number ca-number--sm" type="number" value="1" />
+                      </label>
+                      <button type="button">⬇ generate image</button>
+                    </div>
+                    <div class="ca-meter">output image: 2000×2000 px (4.0 Mpx)</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="ca-side">
+              <div class="ca-tabs" role="tablist">
+                <button type="button" role="tab" class="ca-tab ca-tab--active" aria-selected="true">
+                  Rule &amp; initial conditions
+                </button>
+                <button type="button" role="tab" class="ca-tab" aria-selected="false">
+                  Tags &amp; analysis
+                </button>
+                <button type="button" class="ca-tab ca-layout-toggle">old layout</button>
+              </div>
+
+              <div class="ca-tab-panel ca-controls-tab" role="tabpanel">
+                <div class="ca-block">
+                  <h3 class="ca-block-title">Rule Controls</h3>
+
+                  <div class="ca-fields">
+                    <div class="ca-field">
+                      <span class="ca-label">States</span>
+                      <span class="ca-seg">
+                        <button type="button" class="on">2 colors</button>
+                        <button type="button">3 colors</button>
+                        <button type="button">4 colors</button>
+                        <button type="button">5 colors</button>
+                      </span>
+                      <button type="button" class="ca-link-btn">custom count…</button>
+                    </div>
+
+                    <div class="ca-field">
+                      <span class="ca-label">Rule</span>
+                      <span class="ca-seg">
+                        <button type="button">totalistic</button>
+                        <button type="button" class="on">by templates</button>
+                        <button type="button">by descendants</button>
+                      </span>
+                    </div>
+
+                    <div class="ca-field">
+                      <span class="ca-label">Neighborhood</span>
+                      <span class="ca-seg">
+                        <button type="button" class="on">3 cells</button>
+                        <button type="button">5 cells</button>
+                        <button type="button">7 cells</button>
+                      </span>
+                    </div>
+
+                    <div class="ca-field">
+                      <span class="ca-label">Previous rows</span>
+                      <input class="ca-number ca-number--sm" type="number" value="1" />
+                    </div>
+                  </div>
+
+                  <div class="ca-panel mt-2">
+                    <div class="ca-control">
+                      <label class="ca-label">Local rule code (0-255)</label>
+                      <div class="ca-inline">
+                        <input class="ca-slider" type="range" min="0" max="255" value="126" />
+                        <input class="ca-number" type="number" value="126" />
+                        <span class="ca-out">126</span>
+                      </div>
+                    </div>
+
+                    <div class="ca-control">
+                      <label class="ca-label">
+                        Local rule: 8 digits from 0 to 1 in order 000..111
+                      </label>
+                      <input class="ca-input" type="text" value="01111110" />
+                      <div class="ca-meter">8/8 positions filled</div>
+                    </div>
+                  </div>
+
+                  <div class="ca-actions">
+                    <button type="button">random rule</button>
+                    <button type="button">reset</button>
+                  </div>
+                </div>
+
+                <div class="ca-block">
+                  <h3 class="ca-block-title">Initial Conditions</h3>
+
+                  <div class="ca-fields">
+                    <div class="ca-field">
+                      <span class="ca-label">Start</span>
+                      <span class="ca-seg">
+                        <button type="button" class="on">single cell</button>
+                        <button type="button">random</button>
+                        <button type="button">custom field</button>
+                      </span>
+                    </div>
+                  </div>
+
+                  <div class="ca-panel mt-2">
+                    <div class="ca-control">
+                      <label class="ca-label">Generation height</label>
+                      <div class="ca-inline">
+                        <input class="ca-slider" type="range" min="40" max="640" value="220" />
+                        <input class="ca-number" type="number" value="220" />
+                      </div>
+                      <div class="ca-meter">220 rows</div>
+                    </div>
+
+                    <div class="ca-control">
+                      <label class="ca-label">Generation width</label>
+                      <div class="ca-inline">
+                        <input class="ca-slider" type="range" min="11" max="801" value="401" />
+                        <input class="ca-number" type="number" value="401" />
+                      </div>
+                      <div class="ca-meter">401 cells per row</div>
+                    </div>
+
+                    <div class="ca-control">
+                      <label class="ca-label">Noise probability (against the rule)</label>
+                      <div class="ca-inline">
+                        <input class="ca-slider" type="range" min="0" max="1" step="0.001" value="0" />
+                        <input class="ca-number" type="number" value="0" />
+                        <span class="ca-out">0%</span>
+                      </div>
+                      <span class="ca-seg">
+                        <button type="button">0.1%</button>
+                        <button type="button">0.01%</button>
+                        <button type="button">0.001%</button>
+                      </span>
+                      <div class="ca-meter">the rule is applied with no random deviations</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <details class="app-about">
+          <summary><h2>About this simulator</h2></summary>
+          <div class="app-about-body">
+            <section>
+              <p>
+                An interactive explorer for one-dimensional cellular automata. Define a rule, run it,
+                and study the resulting space-time diagram — or let the app scan thousands of rules
+                automatically and tag the interesting ones.
+              </p>
+            </section>
+
+            <section>
+              <h3>What you can do</h3>
+              <ul>
+                <li>
+                  Run automata with an arbitrary number of cell states (2–36), a neighborhood of 3, 5
+                  or 7 cells, and a temporal depth of up to 8 previous rows.
+                </li>
+                <li>
+                  Define rules in several ways: <strong>totalistic</strong> (keyed by the sum of the
+                  neighbors), <strong>by templates</strong> (a full local transition table, editable
+                  as JSON, including stochastic entries), <strong>by descendants</strong> (each live
+                  cell emits children that collide by a chosen rule), or by generating a random rule.
+                </li>
+                <li>
+                  Start from a single live cell, random noise of a given density, or a custom row.
+                </li>
+                <li>
+                  Render the space-time diagram on canvas, continue an existing run for extra
+                  generations, reduce the field to a pattern map, and export very large diagrams
+                  directly to PNG.
+                </li>
+                <li>
+                  Generate rules that conserve the number of cells of a chosen “particle” state,
+                  derived statically from the rule table.
+                </li>
+              </ul>
+            </section>
+
+            <section>
+              <h3>Automated rule analysis</h3>
+              <p>
+                Each analysis scans a code range, a random sample of rules, or a set of already
+                tagged rules, and attaches a tag to every match:
+              </p>
+              <ul>
+                <li>
+                  <strong>Classification</strong> — dead, fixed, periodic, stable, chaotic, complex.
+                </li>
+                <li>
+                  <strong>Fields</strong> — a repeating, possibly drifting pattern covering most of
+                  the diagram.
+                </li>
+                <li><strong>Gliders</strong> — localized structures that reappear shifted sideways.</li>
+                <li>
+                  <strong>Custom search</strong> — user-drawn templates with wildcards and equality
+                  variables.
+                </li>
+                <li>
+                  <strong>Absence of lines</strong> — full-height vertical or diagonal solid streaks.
+                </li>
+                <li>
+                  <strong>Chaos</strong> and <strong>Chaos 2</strong> — dominant-pattern share and
+                  pattern diversity.
+                </li>
+                <li><strong>All states present</strong> — every state still occurs late in the run.</li>
+                <li>
+                  <strong>Sub-analysis</strong> — an extra pass detecting large surviving structures.
+                </li>
+              </ul>
+            </section>
+
+            <section>
+              <h3>About cellular automata</h3>
+              <p>
+                A one-dimensional cellular automaton is a row of cells that all update at the same
+                time according to one local rule applied to each cell's neighborhood. Stacking every
+                generation under the previous one produces a space-time diagram. Despite the
+                simplicity of the rules, these systems produce the full range of behavior — from an
+                immediately dead field to periodic structures, chaos and computationally universal
+                patterns such as elementary rule 110.
+              </p>
+              <p>
+                Source code:
+                <a href="https://github.com/Kypaku/ca2026" rel="noopener">github.com/Kypaku/ca2026</a>
+              </p>
+            </section>
+
+            <noscript>
+              <p>
+                <strong>JavaScript is required</strong> to run the simulator itself: the diagram is
+                drawn on an HTML5 canvas in your browser.
+              </p>
+            </noscript>
+          </div>
+        </details>
+      </main>
+    </div>
   </body>
 </html>
