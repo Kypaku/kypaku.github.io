@@ -1,5 +1,10 @@
 #!/usr/bin/env python3
 """
+sudo apt install python3-evdev
+sudo usermod -aG input $USER
+echo 'KERNEL=="uinput", GROUP="input", MODE="0660", OPTIONS+="static_node=uinput"' | sudo tee /etc/udev/rules.d/99-uinput.rules
+sudo modprobe uinput
+sudo udevadm control --reload-rules && sudo udevadm trigger
 Аналоговое руление с клавиатуры для игр под Wine (Linux).
 Читает клавиатуру через evdev и создаёт виртуальный геймпад через uinput.
 Wine видит его как обычный джойстик.
